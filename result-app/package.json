@@ -1,0 +1,15 @@
+{
+  "name": "result-app",
+  "version": "1.0.0",
+  "description": "Displays voting results",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "pg": "^8.8.0",
+    "socket.io": "^4.5.4",
+    "ejs": "^3.1.8"
+  }
+}

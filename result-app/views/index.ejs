@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voting Results</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <style>
+        body { font-family: 'Helvetica Neue', Arial, sans-serif; background-color: #f0f2f5; color: #1c1e21; margin: 0; padding: 40px; display: flex; justify-content: center; align-items: center; height: 100vh; }
+        .container { background: #fff; padding: 30px 40px; border-radius: 12px; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1); text-align: center; width: 90%; max-width: 700px; }
+        h1 { color: #333; margin-bottom: 20px; }
+        .results { position: relative; width: 100%; background-color: #e9ebee; border-radius: 25px; display: flex; overflow: hidden; height: 50px; margin-top: 30px; }
+        .bar { height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.2em; transition: width 0.5s ease-in-out; }
+        .bar-a { background-color: #5c67f2; }
+        .bar-b { background-color: #f28e5c; }
+        .labels { display: flex; justify-content: space-between; margin-top: 15px; font-size: 1.1em; font-weight: 500; padding: 0 10px; }
+        .label-a { color: #5c67f2; }
+        .label-b { color: #f28e5c; }
+        .total { margin-top: 25px; font-size: 1.3em; font-weight: bold; color: #4b4f56; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Live Voting Results</h1>
+        <div class="labels">
+            <span class="label-a">Cats: <span id="a-votes">0</span></span>
+            <span class="label-b">Dogs: <span id="b-votes">0</span></span>
+        </div>
+        <div class="results">
+            <div id="bar-a" class="bar bar-a" style="width: 50%;"></div>
+            <div id="bar-b" class="bar bar-b" style="width: 50%;"></div>
+        </div>
+        <div class="total">Total Votes: <span id="total-votes">0</span></div>
+    </div>
+    <script>
+        const socket = io();
+        const aVotesEl = document.getElementById('a-votes');
+        const bVotesEl = document.getElementById('b-votes');
+        const totalVotesEl = document.getElementById('total-votes');
+        const barA = document.getElementById('bar-a');
+        const barB = document.getElementById('bar-b');
+
+        socket.on('votes', function(votes) {
+            const a = votes.a || 0;
+            const b = votes.b || 0;
+            const total = a + b;
+
+            aVotesEl.innerText = a;
+            bVotesEl.innerText = b;
+            totalVotesEl.innerText = total;
+
+            const aPercent = total === 0 ? 50 : (a / total) * 100;
+            const bPercent = total === 0 ? 50 : (b / total) * 100;
+
+            barA.style.width = aPercent + '%';
+            barB.style.width = bPercent + '%';
+            
+            barA.innerText = a > 0 ? Math.round(aPercent) + '%' : '';
+            barB.innerText = b > 0 ? Math.round(bPercent) + '%' : '';
+        });
+    </script>
+</body>
+</html>
