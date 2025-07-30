@@ -38,6 +38,6 @@ jobs:
       - name: Tag and Push Docker Image
         run: |
             for SERVICE in worker voting-app result-app; do
-              docker tag devops-monitoring-${SERVICE}:latest ${{ secrets.DOCKER_USERNAME }}/devops-monitoring-${SERVICE}:$VERSION
+              docker tag devops-monitoring-app-${SERVICE}:latest ${{ secrets.DOCKER_USERNAME }}/devops-monitoring-${SERVICE}:$VERSION
               docker push ${{ secrets.DOCKER_USERNAME }}/devops-monitoring-${SERVICE}:$VERSION
             done
