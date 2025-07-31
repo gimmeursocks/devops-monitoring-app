@@ -24,8 +24,11 @@ public class Worker
         {
             try
             {
-                redis = ConnectionMultiplexer.Connect(redisHost);
+                var redisOptions = ConfigurationOptions.Parse(redisHost);
+                redisOptions.AbortOnConnectFail = false;
+                redis = ConnectionMultiplexer.Connect(redisOptions);
                 database = redis.GetDatabase();
+
                 Console.WriteLine("Connected to Redis");
             }
             catch (RedisConnectionException ex)
