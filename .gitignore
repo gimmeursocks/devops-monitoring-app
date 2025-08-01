@@ -1,3 +1,5 @@
 .env
 */node_modules
 *.sln
+k8s/sealed-secrets-cert.pem
+k8s/db-secret.yaml

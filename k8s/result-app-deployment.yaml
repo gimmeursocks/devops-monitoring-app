@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: result-app-deployment
+  labels:
+    app: voting-app
+    tier: result
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: voting-app
+      tier: result
+  template:
+    metadata:
+      labels:
+        app: voting-app
+        tier: result
+    spec:
+      containers:
+        - name: result-app
+          image: gimmeursocks/devops-monitoring-result-app:1.0.0
+          ports:
+            - containerPort: 80
+          env:
+            - name: POSTGRES_HOST
+              value: db-service
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: username
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: password
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "250m"
+              memory: "256Mi"

@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: worker-deployment
+  labels:
+    app: voting-app
+    tier: worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: voting-app
+      tier: worker
+  template:
+    metadata:
+      labels:
+        app: voting-app
+        tier: worker
+    spec:
+      containers:
+        - name: worker
+          image: gimmeursocks/devops-monitoring-worker:1.0.0
+          env:
+            - name: REDIS_HOST
+              value: redis-service
+            - name: POSTGRES_HOST
+              value: db-service
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: username
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: password
+          resources:
+            requests:
+              cpu: "200m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"

@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: db-deployment
+  labels:
+    app: voting-app
+    tier: db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: voting-app
+      tier: db
+  template:
+    metadata:
+      labels:
+        app: voting-app
+        tier: db
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:15-alpine
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: db_name
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: username
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: password
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: db-persistent-storage
+            - name: init-sql
+              mountPath: /docker-entrypoint-initdb.d
+              readOnly: true
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+      volumes:
+        - name: db-persistent-storage
+          persistentVolumeClaim:
+            claimName: db-pvc
+        - name: init-sql
+          configMap:
+            name: db-initdb-config

@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-deployment
+  labels:
+    app: voting-app
+    tier: queue
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: voting-app
+      tier: queue
+  template:
+    metadata:
+      labels:
+        app: voting-app
+        tier: queue
+    spec:
+      containers:
+        - name: redis
+          image: redis:7-alpine
+          ports:
+            - containerPort: 6379
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "300m"
+              memory: "256Mi"
